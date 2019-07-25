@@ -1,0 +1,41 @@
+version: "3.5.0"
+opam-version: "2.0"
+maintainer:   ["anil@recoil.org" "thomas@gazagnaire.org"]
+authors:      ["Thomas Gazagnaire" "Anil Madhavapeddy" "Gabriel Radanne"
+               "Mindy Preston" "Thomas Leonard" "Nicolas Ojeda Bar"
+               "Dave Scott" "David Kaloper" "Hannes Mehnert" "Richard Mortier"]
+homepage:     "https://github.com/mirage/mirage"
+bug-reports:  "https://github.com/mirage/mirage/issues/"
+dev-repo:     "git+https://github.com/mirage/mirage.git"
+license:      "ISC"
+tags:         ["org:mirage" "org:xapi-project"]
+
+
+build: [
+  ["dune" "subst"] {pinned}
+  ["dune" "build" "-x" "riscv" "-p" "mirage-types" "-j" jobs]
+  ["dune" "runtest" "-p" name "-j" jobs] {with-test}
+]
+
+depends: [
+  "ocaml" {= "4.07.0"}
+  "dune" {build & >= "1.1.0"}
+  "ocaml-riscv"
+  "mirage-device-riscv"
+  "mirage-time-riscv"
+  "mirage-clock-riscv"
+  "mirage-flow-riscv"
+  "mirage-console-riscv"
+]
+
+patches: ["dune.patch" "types.patch" "types_lwt.patch"]
+extra-files:[
+  [ "dune.patch" "md5=3aad3eb9fa7f03c8a780b811475e7102" ]
+  [ "types_lwt.patch" "md5=0afeb154c20471d5be23bb6b252fdfeb" ]
+  [ "types.patch" "md5=38744a81ee6c2267fedbeb4ae4ef0eb8" ]
+]
+
+synopsis: "Module type definitions for MirageOS applications"
+description: """
+Module type definitions for MirageOS applications
+"""

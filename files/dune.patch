@@ -1,0 +1,25 @@
+--- ../types/dune	2019-07-12 21:26:44.610415158 +0530
++++ ../types/dune_new	2019-07-14 16:33:49.438053742 +0530
+@@ -3,10 +3,8 @@
+   (public_name mirage-types)
+   (wrapped     false)
+   (modules     mirage_types)
+-  (libraries   mirage-device mirage-time mirage-random mirage-flow
+-               mirage-console mirage-block mirage-clock mirage-net
+-               mirage-kv mirage-fs mirage-channel
+-               mirage-protocols mirage-stack))
++  (libraries   mirage-device mirage-time mirage-flow
++               mirage-console mirage-clock ))
+ 
+ (library
+   (name        mirage_types_lwt)
+@@ -14,8 +12,4 @@
+   (wrapped     false)
+   (modules     mirage_types_lwt)
+   (libraries   cstruct lwt ipaddr mirage-types
+-               mirage-time-lwt mirage-random mirage-flow-lwt
+-               mirage-console-lwt mirage-block-lwt mirage-clock-lwt
+-               mirage-net-lwt mirage-kv-lwt mirage-fs-lwt
+-               mirage-channel-lwt
+-               mirage-protocols-lwt mirage-stack-lwt))
++               mirage-time-lwt mirage-flow-lwt mirage-console-lwt mirage-clock-lwt ))
