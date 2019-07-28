@@ -543,16 +543,19 @@ let clean_myocamlbuild () =
 let update_package_suffix suffix pkg =
   let build = pkg.build
   in
-  let opam = if build then pkg.opam else pkg.opam^suffix
+  let open Str in 
+  let opam_initial = if build then pkg.opam else pkg.opam^suffix in
+  	let r = Str.regexp ".*-riscv-riscv" in
+  		let opam_sanitized = if (Str.string_match r opam_initial 0) then pkg.opam else opam_initial
   and ocamlfind = Astring.String.Set.elements pkg.ocamlfind
   and min = pkg.min
   and max = pkg.max
   in
     match (min, max) with
-    | None, None -> package ~build ~ocamlfind opam
-    | (Some min), None -> package ~build ~ocamlfind ~min opam
-    | None, (Some max) ->  package ~build ~ocamlfind ~max opam
-    | (Some min), (Some max) -> package ~build ~ocamlfind ~min ~max opam
+    | None, None -> package ~build ~ocamlfind opam_sanitized
+    | (Some min), None -> package ~build ~ocamlfind ~min opam_sanitized
+    | None, (Some max) ->  package ~build ~ocamlfind ~max opam_sanitized
+    | (Some min), (Some max) -> package ~build ~ocamlfind ~min ~max opam_sanitized
 
 
 
