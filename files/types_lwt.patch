@@ -1,6 +1,8 @@
---- ../types/mirage_types_lwt.ml	2019-07-12 21:26:44.610415158 +0530
-+++ ../types/new_lwt.ml	2019-07-14 11:38:11.353558550 +0530
-@@ -24,42 +24,8 @@
+diff --git a/types/mirage_types_lwt.ml b/types/mirage_types_lwt.ml
+index 5345a21..0bfad24 100644
+--- a/types/mirage_types_lwt.ml
++++ b/types/mirage_types_lwt.ml
+@@ -24,42 +24,9 @@ module type TIME = Mirage_time_lwt.S
  module type MCLOCK = Mirage_clock_lwt.MCLOCK
  module type PCLOCK = Mirage_clock_lwt.PCLOCK
  
@@ -12,7 +14,7 @@
  
 -(** Block devices *)
 -module type BLOCK = Mirage_block_lwt.S
--
+ 
 -(** Network *)
 -module type NETWORK = Mirage_net_lwt.S
 -
