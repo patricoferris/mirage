@@ -1,6 +1,8 @@
---- ../types/mirage_types.ml	2019-07-12 21:26:44.610415158 +0530
-+++ ../types/new.ml	2019-07-14 16:31:17.233450158 +0530
-@@ -54,10 +54,6 @@
+diff --git a/types/mirage_types.ml b/types/mirage_types.ml
+index e150c35..2e98b69 100644
+--- a/types/mirage_types.ml
++++ b/types/mirage_types.ml
+@@ -54,10 +54,6 @@ module type TIME  = Mirage_time.S
  module type MCLOCK = Mirage_clock.MCLOCK
  module type PCLOCK = Mirage_clock.PCLOCK
  
@@ -11,7 +13,7 @@
  
  (** {2 Connection between endpoints} *)
  
-@@ -67,56 +63,3 @@
+@@ -67,56 +63,4 @@ module type FLOW = Mirage_flow.S
  
  module type CONSOLE = Mirage_console.S
  
@@ -66,5 +68,5 @@
 -module type KV_RW = Mirage_kv.RW
 -
 -(** {2 Filesystem devices} *)
--
+ 
 -module type FS = Mirage_fs.S
