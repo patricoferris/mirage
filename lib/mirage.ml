@@ -490,9 +490,18 @@ let configure_main_xe ~root ~name =
 
 let clean_main_xe ~name = Bos.OS.File.delete Fpath.(v name + "xe")
 
-let configure_makefile ~no_depext ~opam_name =
+let configure_makefile ~no_depext ~opam_name target =
   let open Codegen in
   let file = Fpath.(v "Makefile") in
+  let additional_content = match target with
+  | `Riscv -> "OCAML_FREESTANDING_RISCV_PATH := $(shell ocamlfind query ocaml-freestanding-riscv)\n\
+                MIRAGE_RISCV_BINDINGS_PATH = $(shell ocamlfind -toolchain riscv query mirage-riscv)\n\
+                LINKER_PATH = $(shell ocamlfind -toolchain riscv query baremetal-linker-riscv)\n\
+                BOOT_PATH = \"${OPAM_SWITCH_PREFIX}/lib\"\n\
+                kernel:\n\
+                \triscv64-unknown-elf-g++  -mcmodel=medany _build/main.native.o -o kernel -static -nostdlib -nostartfiles -Wl,-T$(LINKER_PATH)/linker.x -Wl,--start-group $(OCAML_FREESTANDING_RISCV_PATH)/libnolibc.a $(BOOT_PATH)/libboot.a $(OCAML_FREESTANDING_RISCV_PATH)/libasmrun.a $(MIRAGE_RISCV_BINDINGS_PATH)/libmirage-riscv_bindings.a -Wl,--end-group -lm\n"
+  | _ -> ""
+  in
   with_output file (fun oc () ->
       let fmt = Format.formatter_of_out_channel oc in
       append fmt "# %s" (generated_header ());
@@ -517,6 +526,8 @@ let configure_makefile ~no_depext ~opam_name =
                   clean::\n\
                   \tmirage clean\n"
         opam_name opam_name opam_name depext;
+        newline fmt;
+        append fmt "%s" additional_content;
       R.ok ())
     "Makefile"
 
@@ -613,7 +624,7 @@ let configure i =
   configure_myocamlbuild () >>= fun () ->
   configure_opam ~name:opam_name (add_info_suffix target i) >>= fun () ->
   let no_depext = Key.(get ctx no_depext) in
-  configure_makefile ~no_depext ~opam_name >>= fun () ->
+  configure_makefile ~no_depext ~opam_name target >>= fun () ->
   match target with
   | `Xen ->
     configure_main_xl "xl" i >>= fun () ->
@@ -881,6 +892,7 @@ let clean i =
   clean_main_libvirt_xml ~name >>= fun () ->
   clean_myocamlbuild () >>= fun () ->
   Bos.OS.File.delete Fpath.(v "Makefile") >>= fun () ->
+  Bos.OS.File.delete Fpath.(v "kernel") >>= fun () ->  
   Bos.OS.File.delete (opam_file (unikernel_opam_name name `Hvt)) >>= fun () ->
   Bos.OS.File.delete (opam_file (unikernel_opam_name name `Unix)) >>= fun () ->
   Bos.OS.File.delete (opam_file (unikernel_opam_name name `Xen)) >>= fun () ->
