@@ -1,6 +1,6 @@
 version: "3.5.0"
 opam-version: "2.0"
-maintainer:   ["anil@recoil.org" "thomas@gazagnaire.org"]
+maintainer:   "Sai Venkata Krishnan <saiganesha5.svkv@gmail.com>"
 authors:      "The MirageOS team"
 homepage:     "https://github.com/mirage/mirage"
 bug-reports:  "https://github.com/mirage/mirage/issues/"
@@ -32,9 +32,9 @@ depends:   [
 
 patches: ["dune.patch" "types.patch" "types_lwt.patch"]
 extra-files:[
-  [ "dune.patch" "md5=3aad3eb9fa7f03c8a780b811475e7102" ]
-  [ "types_lwt.patch" "md5=0afeb154c20471d5be23bb6b252fdfeb" ]
-  [ "types.patch" "md5=38744a81ee6c2267fedbeb4ae4ef0eb8" ]
+  [ "dune.patch" "md5=ba2d44f8a083ad2103f9394ee20b9bc0" ]
+  [ "types_lwt.patch" "md5=d5cce43581588209a2752c9cb62a6b6a" ]
+  [ "types.patch" "md5=f42e1eb168befcf6571d160e609cb4da" ]
 ]
 
 synopsis: "Lwt module type definitions for MirageOS applications"
