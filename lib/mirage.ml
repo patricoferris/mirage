@@ -497,7 +497,7 @@ let configure_makefile ~no_depext ~opam_name target =
   | `Riscv -> "OCAML_FREESTANDING_RISCV_PATH := $(shell opam config exec --  ocamlfind query ocaml-freestanding-riscv)\n\
                 MIRAGE_RISCV_BINDINGS_PATH = $(shell opam config exec -- ocamlfind -toolchain riscv query mirage-riscv)\n\
                 LINKER_PATH = $(shell opam config exec -- ocamlfind -toolchain riscv query baremetal-linker-riscv)\n\
-                BOOT_PATH = \"${OPAM_SWITCH_PREFIX}/lib\"\n\
+                BOOT_PATH = \"$(shell opam config var prefix)/lib\"\n\
                 kernel:\n\
                 \triscv64-unknown-elf-g++  -mcmodel=medany _build/main.native.o -o kernel -static -nostdlib -nostartfiles -Wl,-T$(LINKER_PATH)/linker.x -Wl,--start-group $(OCAML_FREESTANDING_RISCV_PATH)/libnolibc.a $(BOOT_PATH)/libboot.a $(OCAML_FREESTANDING_RISCV_PATH)/libasmrun.a $(MIRAGE_RISCV_BINDINGS_PATH)/libmirage-riscv_bindings.a -Wl,--end-group -lm\n"
   | _ -> ""
