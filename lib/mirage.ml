@@ -551,23 +551,30 @@ let clean_myocamlbuild () =
   | Ok stat when stat.Unix.st_size = 0 -> Bos.OS.File.delete fn
   | _ -> R.ok ()
 
-let update_package_suffix suffix pkg =
-  let build = pkg.build
-  in
-  let open Str in 
-  let opam_initial = if build then pkg.opam else pkg.opam^suffix in
-  	let r = Str.regexp ".*-riscv-riscv" in
-  		let opam_sanitized = if (Str.string_match r opam_initial 0) then pkg.opam else opam_initial
-  and ocamlfind = Astring.String.Set.elements pkg.ocamlfind
-  and min = pkg.min
-  and max = pkg.max
-  in
-    match (min, max) with
-    | None, None -> package ~build ~ocamlfind opam_sanitized
-    | (Some min), None -> package ~build ~ocamlfind ~min opam_sanitized
-    | None, (Some max) ->  package ~build ~ocamlfind ~max opam_sanitized
-    | (Some min), (Some max) -> package ~build ~ocamlfind ~min ~max opam_sanitized
-
+let update_packages_suffix suffix pkgs =
+  let rec loop acc = function 
+    | [] -> List.concat acc
+    | pkg::ps ->
+      let build_package ?version ?is_min pkg =
+        let build = pkg.build in
+        let opam_initial = if build then pkg.opam else pkg.opam^suffix in
+        let r = Str.regexp ".*-riscv-riscv" in
+        let opam_sanitized = if (Str.string_match r opam_initial 0) then pkg.opam else opam_initial in
+        let ocamlfind = Astring.String.Set.elements pkg.ocamlfind in 
+        begin match version with 
+          | None -> package ~build ~ocamlfind opam_sanitized 
+          | Some v -> 
+            if is_min = Some true then package ~build ~ocamlfind ~min:v opam_sanitized 
+            else package ~build ~ocamlfind ~max:v opam_sanitized  
+        end 
+      in
+        let mins = (Astring.String.Set.elements pkg.min) in
+        let maxs = (Astring.String.Set.elements pkg.max) in 
+        let packages = if (Astring.String.Set.is_empty pkg.min) && (Astring.String.Set.is_empty pkg.max) then [build_package pkg]
+        else (List.map (fun version -> build_package ~version ~is_min:true  pkg) mins) @ (List.map (fun version -> build_package ~version ~is_min:false pkg) maxs) in 
+          loop (packages :: acc) ps
+    in 
+      loop [] pkgs
 
 
 let add_info_suffix target info =
@@ -579,11 +586,9 @@ let add_info_suffix target info =
   and build_dir = Info.build_dir info 
   and context = Info.context info 
   and keys = Info.keys info 
-  and packages = Info.packages info
-  in 
-  let packages = List.map (update_package_suffix suffix) packages 
-  in
-  Info.create ~packages ~keys ~context ~build_dir ~name
+  and packages = Info.packages info in
+  let packages = update_packages_suffix suffix packages in
+    Info.create ~packages ~keys ~context ~build_dir ~name
 
 
 let opam_file n = Fpath.(v n + "opam")
